@@ -1,6 +1,6 @@
 # Programming from the Ground Up for macOS
 
-Porting the [Programming from the Ground Up 1.0](https://savannah.nongnu.org/projects/pgubook/) book to *macOS* High Sierra
+Porting the [Programming from the Ground Up 1.0](https://savannah.nongnu.org/projects/pgubook/) book to *macOS* High Sierra, using x86-64 Assembly.
 
 Translating the pgubook to the XNU kernel that power macOS (formerly OS X).
 Targets 64-bit architecture and uses NASM assembler, with Intel syntax.
