@@ -13,3 +13,5 @@ Tested with:
 References:
 
 - [XNU System Calls](https://opensource.apple.com/source/xnu/xnu-4570.41.2/bsd/kern/syscalls.master.auto.html)
+
+- [System V x86-64 psABI](https://github.com/hjl-tools/x86-psABI/wiki/X86-psABI)
