@@ -62,9 +62,9 @@ open_files:
 open_fd_in:
     ; open syscall
     mov rax, SYS_OPEN
-    mov rdi, [rbp + ST_ARGV_1]
-    mov rsi, O_RDONLY
-    mov rdx, 0666
+    mov rdi, [rbp + ST_ARGV_1]  ; user_addr_t path
+    mov rsi, O_RDONLY           ; int flags
+    mov rdx, 0666               ; int mode
     syscall
 
 store_fd_in:
@@ -73,15 +73,13 @@ store_fd_in:
 open_fd_out:
     ; open syscall
     mov rax, SYS_OPEN
-    mov rdi, [rbp + ST_ARGV_2]
-    mov rsi, O_CREAT_WRONLY_TRUNC,
-    mov rdx, 0666
+    mov rdi, [rbp + ST_ARGV_2]      ; path
+    mov rsi, O_CREAT_WRONLY_TRUNC   ; flags
+    mov rdx, 0666                   ; mode
     syscall
 
 store_fd_out:
     mov [rbp + ST_FD_OUT], rax
-
-; DEBUG: I know we can open the file for output
 
 ; Begin main loop
 read_loop_begin:
@@ -95,12 +93,13 @@ read_loop_begin:
     cmp rax, EOF
     jle end_loop
 
-;continue_read_loop:
-;    push [buffer]
-;    push rax
-;    call convert_to_upper
-;    pop rax
-;    add rsp, 8
+continue_read_loop:
+    lea rsi, [rel buffer]
+    push rsi
+    push rax
+    call convert_to_upper
+    pop rax
+    add rsp, 8
 
 ; Write the block out to the output file
     mov rdx, rax                ; buffer size (from read return), last arg to write
@@ -124,3 +123,54 @@ end_loop:
     mov rax, SYS_EXIT
     mov rdi, 0
     syscall
+
+; PURPOSE:  This function actually does the conversion to upper case for a block
+;           conversion to upper case for a block
+; INPUT:    The first parameter is the location
+;           of the block of memory to convert
+;           The second parameter is the length of that buffer
+; OUTPUT:   This function overwrites the current buffer with the uppercase version.
+;
+; VARIABLES
+;           rax - Beginning of buffer
+;           rbx - Length of buffer
+;           rdi - Current buffer offset
+;           cl - Current byte being examined (first part of ecx)
+
+LOWERCASE_A equ 'a'
+LOWERCASE_Z equ 'z'
+UPPER_CONVERSION equ 'A' - 'a'
+
+ST_BUFFER_LEN equ 16
+ST_BUFFER     equ 24
+
+convert_to_upper:
+    push rbp
+    mov rbp, rsp
+
+    mov rax, [rbp + ST_BUFFER]
+    mov rbx, [rbp + ST_BUFFER_LEN]
+    mov rdi, 0
+
+    cmp rbx, 0
+    je end_convert_loop
+
+convert_loop:
+    mov cl, [rax + rdi]
+    cmp cl, LOWERCASE_A
+    jl next_byte
+    cmp cl, LOWERCASE_Z
+    jg next_byte
+
+    add cl, UPPER_CONVERSION
+    mov [rax + rdi], cl
+next_byte:
+    inc rdi
+    cmp rbx, rdi
+    jne convert_loop
+
+end_convert_loop:
+    mov rsp, rbp
+    pop rbp
+    ret
+
