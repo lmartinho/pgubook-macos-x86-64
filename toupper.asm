@@ -36,7 +36,7 @@ NUMBER_ARGUMENTS equ 2
 ;          from the data file and written from into
 ;          the output file. This should never exceed 16,000
 ;          for various reasons
-BUFFER_SIZE equ 8
+BUFFER_SIZE equ 500
 buffer:
     resb BUFFER_SIZE
 
