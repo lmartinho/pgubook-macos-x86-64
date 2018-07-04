@@ -70,12 +70,11 @@ record3:
 
 ; This is the name of the file we will write to
 file_name:
-    db 'test.dat', 8
-
-    section .text
+    db 'test.dat'
 
 ST_FILE_DESCRIPTOR equ -8
 
+    section .text
     global start
 start:
     ; Copy stack pointer to base pointer
@@ -85,7 +84,7 @@ start:
 
     ; Open the file
     mov rax, SYS_OPEN
-    mov rdi, file_name
+    lea rdi, [rel file_name]
     mov rsi, 0101
     mov rdx, 0666
     syscall
