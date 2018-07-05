@@ -15,3 +15,6 @@ STDERR equ 2
 
 ; Common Status Codes
 END_OF_FILE equ 0
+
+; Options for open
+O_RDONLY equ 0
