@@ -35,6 +35,10 @@ start:
     mov rdx, 0666
     syscall
 
+    ; @lmartinho: Check if open was successful
+    cmp rax, 2
+    je exit_failed_open
+
     ; Save the file descriptor
     mov [rbp + ST_INPUT_DESCRIPTOR], rax
 
@@ -85,6 +89,7 @@ finished_reading:
     mov rdi, 0
     syscall
 
-
-
-
+exit_failed_open:
+    mov rax, SYS_EXIT
+    mov rdi, 254
+    syscall
