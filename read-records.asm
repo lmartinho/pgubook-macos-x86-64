@@ -7,7 +7,9 @@ extern write_newline
 
     section .data
 file_name:
-    db 'test.dat'
+    ; Null-terminated string as the user_addr_t path parameter of
+    ; the open syscall
+    db 'test.dat', 0
 
     section .bss
 record_buffer:
