@@ -25,10 +25,10 @@ start:
     ST_INPUT_DESCRIPTOR equ -8
     ST_OUTPUT_DESCRIPTOR equ -16
 
-    ; Copy the stack point to rbp
+    ; Copy the stack pointer to rbp
     mov rbp, rsp
     ; Allocate space to store the file descriptors
-    sub rbp, 16
+    sub rsp, 16
 
     ; Open the file
     mov rax, SYS_OPEN

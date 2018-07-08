@@ -12,7 +12,7 @@
     section .text
     global count_chars
 
-    ST_STRING_START_ADDRESS equ 8
+    ST_STRING_START_ADDRESS equ 16
 
 count_chars:
     push rbp

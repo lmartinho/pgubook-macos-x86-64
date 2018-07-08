@@ -7,7 +7,7 @@ newline:
     db `\n`
 
     section .text
-ST_FILEDES equ 8
+ST_FILEDES equ 16
 
 write_newline:
     push rbp
