@@ -15,35 +15,35 @@ extern write_record
 ; characters at the end of each field to fill
 ; it up
 record1:
-    dw 'Frederick'
-    %rep 31 ; padding to 40 bytes
+    db 'Frederick', 0
+    %rep 30 ; padding to 40 bytes
     db 0
     %endrep
 
-    dw 'Bartlett'
-    %rep 31 ; padding to 40 bytes
+    db 'Bartlett', 0
+    %rep 31; padding to 40 bytes
     db 0
     %endrep
 
-    dw '4242 S Prairie\nTulsa, OK 55555'
-    %rep 209 ; padding to 240 bytes
+    db `4242 S Prairie\nTulsa, OK 555550`, 0
+    %rep 208 ; padding to 240 bytes
     db 0
     %endrep
 
     dd 45
 
 record2:
-    dw 'Marilyn'
+    db 'Marilyn', 0
     %rep 32 ; padding to 40 bytes
     db 0
     %endrep
 
-    dw 'Taylor'
+    db 'Taylor', 0
     %rep 33 ; padding to 40 bytes
     db 0
     %endrep
 
-    dw '2224 S Johannan St\nChicago, IL 12345'
+    db `2224 S Johannan St\nChicago, IL 12345`, 0
     %rep 203 ; padding to 240 bytes
     db 0
     %endrep
@@ -51,17 +51,17 @@ record2:
     dd 29
 
 record3:
-    dw 'Derrick'
+    db 'Derrick', 0
     %rep 32 ; padding to 40 bytes
     db 0
     %endrep
 
-    dw 'McIntire'
+    db 'McIntire', 0
     %rep 31 ; padding to 40 bytes
     db 0
     %endrep
 
-    dw '500 W Oakland\nSan Diego, CA 54321'
+    db `500 W Oakland\nSan Diego, CA 54321`, 0
     %rep 206 ; padding to 240 bytes
     db 0
     %endrep 
