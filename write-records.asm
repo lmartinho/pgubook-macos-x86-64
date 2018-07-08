@@ -106,7 +106,7 @@ start:
 
     ; Write the third record
     push qword [rbp + ST_FILE_DESCRIPTOR]
-    lea rsi, [rel record1]
+    lea rsi, [rel record3]
     push rsi
     call write_record
 
