@@ -9,3 +9,4 @@ concatenate
 write-records
 read-records
 add-year
+add-year-error-exit

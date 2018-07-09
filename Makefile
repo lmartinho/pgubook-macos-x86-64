@@ -1,7 +1,7 @@
 AS=nasm
 ASFLAGS=-f macho64
 
-all: exit exit_32 maximum power factorial toupper concatenate write-records read-records add-year
+all: exit exit_32 maximum power factorial toupper concatenate write-records read-records add-year add-year-error-exit
 
 clean:
 	rm *.o exit exit_32 maximum power factorial toupper concatenate write-records read-records
@@ -14,6 +14,9 @@ read-records: xnu.asm record-def.asm read-records.o count-chars.o read-record.o 
 
 add-year: xnu.asm record-def.asm add-year.o read-record.o write-record.o
 	ld add-year.o read-record.o write-record.o -o add-year
+
+add-year-error-exit: xnu.asm record-def.asm add-year-error-exit.o read-record.o write-record.o  error-exit.o count-chars.o
+	ld add-year-error-exit.o read-record.o write-record.o error-exit.o count-chars.o -o add-year-error-exit
 
 %: %.o
 	ld $< -o $@
