@@ -1,6 +1,7 @@
 %include "xnu.asm"
 
 extern count_chars
+extern write_newline
 
 ST_ERROR_CODE equ 16
 ST_ERROR_MSG equ 24
@@ -13,8 +14,7 @@ error_exit:
     mov rbp, rsp
 
     ; Write out error code
-    lea rsi, [rel rbp + ST_ERROR_CODE]
-    push rsi
+    push qword [rbp + ST_ERROR_CODE]
     call count_chars
     pop rsi             ; cbuf
     mov rdi, STDERR     ; fd
@@ -22,7 +22,19 @@ error_exit:
     mov rax, SYS_WRITE  ; write
     syscall
 
-    ; ...
+    ; Write out error message
+    push qword [rel rbp + ST_ERROR_MSG]
+    call count_chars
+    pop rsi             ; cbuf
+    mov rdi, STDERR     ; fd
+    mov rdx, rax        ; nbytes
+    mov rax, SYS_WRITE  ; write
+    syscall
+
+    push qword STDERR
+    call write_newline
+    pop rdi
+
     ; Exit with status 1
     mov rax, SYS_EXIT
     mov rdi, 1

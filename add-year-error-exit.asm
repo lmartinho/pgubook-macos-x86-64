@@ -42,16 +42,13 @@ start:
     mov rdx, 0666
     syscall
 
-    ; @lmartinho: Check if open was successful
-    cmp rax, 3
-    jl exit_failed_open
-
-    ; This will test and see if rax is negative.
-    ; If it is not negative, it will jump to continue_processing.
-    ; Otherwise it will handle the error condition that the negative
-    ; number represents.
-    cmp rax, 3
-    jl continue_processing
+    ; Test in book is whether rax is negative.
+    ; I'm actually checking if rax (the file descriptor number) is greater than 2
+    ; since 2 represents STDERR.
+    ; If the condition holds, it will jump to continue_processing.
+    ; Otherwise it will handle the error condition that the invalid number represents
+    cmp rax, 2
+    jg continue_processing
 
     ; Send the error
     section .data
@@ -61,7 +58,10 @@ no_open_file_message:
     db `Can't Open Input File`, 0
 
     section .text
-    push qword [rel no_open_file_code]
+    lea rdi, [rel no_open_file_message]
+    push rdi
+    lea rdi, [rel no_open_file_code]
+    push rdi
     call error_exit
 
 continue_processing:

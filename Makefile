@@ -15,8 +15,8 @@ read-records: xnu.asm record-def.asm read-records.o count-chars.o read-record.o 
 add-year: xnu.asm record-def.asm add-year.o read-record.o write-record.o
 	ld add-year.o read-record.o write-record.o -o add-year
 
-add-year-error-exit: xnu.asm record-def.asm add-year-error-exit.o read-record.o write-record.o  error-exit.o count-chars.o
-	ld add-year-error-exit.o read-record.o write-record.o error-exit.o count-chars.o -o add-year-error-exit
+add-year-error-exit: xnu.asm record-def.asm add-year-error-exit.o read-record.o write-record.o  error-exit.o count-chars.o write-newline.o
+	ld add-year-error-exit.o read-record.o write-record.o error-exit.o count-chars.o write-newline.o -o add-year-error-exit
 
 %: %.o
 	ld $< -o $@
