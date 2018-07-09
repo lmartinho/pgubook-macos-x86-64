@@ -77,12 +77,8 @@ record_read_loop:
     cmp rax, RECORD_SIZE
     jne finished_reading
 
-    ; Read the age
-    mov rdi, [rel record_buffer + RECORD_AGE]
-    ; Increment the age
-    inc rdi
-    ; Write back to the record buffer
-    mov [rel record_buffer + RECORD_AGE], rdi
+    ; Increment the age, in place
+    inc dword [rel record_buffer + RECORD_AGE]
 
     ; Write the record to disk
     push qword [rbp + ST_OUTPUT_DESCRIPTOR]
