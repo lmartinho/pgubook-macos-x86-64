@@ -8,14 +8,12 @@ hello_world:
     db `Hello World\n`, 0
 
     section .text
-    global start
-    global _main                ; to appease GCC
-start:
-_main:                          ; to appease GCC
+    global _main                ; We use _main instead of start because of the C std lib
+_main:
     lea rdi, [rel hello_world]
     push rdi
     call _printf
     pop rdi
 
-    push qword 0
+    push dword 0                ; FIXME: 32 is being returned instead
     call _exit
