@@ -15,6 +15,7 @@ _main:                          ; to appease GCC
     lea rdi, [rel hello_world]
     push rdi
     call _printf
+    pop rdi
 
     push qword 0
     call _exit

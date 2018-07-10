@@ -10,3 +10,5 @@ write-records
 read-records
 add-year
 add-year-error-exit
+hello-world-no-lib
+hello-world-lib
