@@ -1,10 +1,10 @@
 AS=nasm
 ASFLAGS=-f macho64
 
-all: exit exit_32 maximum power factorial toupper concatenate write-records read-records add-year add-year-error-exit hello-world-no-lib hello-world-lib
+all: exit exit_32 maximum power factorial toupper concatenate write-records read-records add-year add-year-error-exit hello-world-no-lib hello-world-lib printf-example
 
 clean:
-	rm *.o exit exit_32 maximum power factorial toupper concatenate write-records read-records add-year add-year-error-exit hello-world-no-lib hello-world-lib
+	rm *.o exit exit_32 maximum power factorial toupper concatenate write-records read-records add-year add-year-error-exit hello-world-no-lib hello-world-lib printf-example
 
 write-records: write-record.o write-records.o
 	ld write-record.o write-records.o -o write-records
@@ -21,6 +21,8 @@ add-year-error-exit: xnu.asm record-def.asm add-year-error-exit.o read-record.o 
 # Uses shared libraries
 hello-world-lib: hello-world-lib.o
 	ld -lc -macosx_version_min 10.13.0 hello-world-lib.o -o hello-world-lib
+printf-example: printf-example.o
+	ld -lc -macosx_version_min 10.13.0 printf-example.o -o printf-example
 
 %: %.o
 	ld $< -o $@

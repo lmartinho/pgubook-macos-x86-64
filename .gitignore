@@ -12,3 +12,4 @@ add-year
 add-year-error-exit
 hello-world-no-lib
 hello-world-lib
+printf-example
