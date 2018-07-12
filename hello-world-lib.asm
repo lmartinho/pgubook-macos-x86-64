@@ -1,3 +1,4 @@
+
 %include "xnu.asm"
 
     extern _exit
@@ -10,10 +11,11 @@ hello_world:
     section .text
     global _main                ; We use _main instead of start because of the C std lib
 _main:
-    lea rdi, [rel hello_world]
-    push rdi
-    call _printf
-    pop rdi
+    push rbp                    ; Not sure why this is required, but it is
 
-    push dword 0                ; FIXME: 32 is being returned instead
+    ; Call printf using the System V AMD64 ABI
+    lea rdi, [rel hello_world]
+    call _printf
+
+    xor rdi, rdi
     call _exit
