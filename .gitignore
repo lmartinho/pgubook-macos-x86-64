@@ -1,3 +1,4 @@
+*.dylib
 *.o
 exit
 exit_32
@@ -13,3 +14,4 @@ add-year-error-exit
 hello-world-no-lib
 hello-world-lib
 printf-example
+write-records-lib

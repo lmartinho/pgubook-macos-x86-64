@@ -76,7 +76,9 @@ ST_FILE_DESCRIPTOR equ -8
 
     section .text
     global start
+    global _main                ; Required when you specify the macosx version to the linker
 start:
+_main:
     ; Copy stack pointer to base pointer
     mov rbp, rsp 
     ; Allocate space to hold the file descriptor
