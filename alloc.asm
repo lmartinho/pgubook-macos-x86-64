@@ -38,8 +38,11 @@ current_break:
     db 0
     %endrep
 
-first_string: ; debug
+address_string: ; debug
     db `address: %#x\n`, 0
+
+here:
+    db `here\n`, 0
 
 ; STRUCTURE INFORMATION
     ; Size of space for memory region header
@@ -71,7 +74,7 @@ first_string: ; debug
     global allocate_init
 allocate_init:
     ; FIXME: Getting a seg fault when I do the standard push rbp
-    ;push rbp                        ; standard function stuff
+    push rbp                        ; standard function stuff
     mov rbp, rsp
 
     ; If the brk system call is called with 0, it
@@ -91,12 +94,6 @@ allocate_init:
                                     ; the allocate function to get
                                     ; more memory from Linux the
                                     ; first time it is run
-
-; The C standard library available in on my system uses System V AMD64 ABI
-; and not the x86 cdecl, so we use registers like on the other system calls
-lea rdi, [rel first_string]
-mov rsi, [rel heap_begin]
-call _printf
 
     mov rsp, rbp
     pop rbp
@@ -191,7 +188,7 @@ allocate_here:                      ; if we've made it here,
     add rax, HEADER_SIZE            ; move rax past the header to
                                     ; the usable memory (since
                                     ; that's what we return)
-    
+
     mov rsp, rbp
     pop rbp
     ret
@@ -201,33 +198,83 @@ move_break:                         ; if we've made it here, that
                                     ; all addressable memory, and
                                     ; we need to ask for more.
 
-                                ; rbx holds the current
-                                ; endpoint of the data,
-                                ; and rcx holds its size
+                                    ; rbx holds the current
+                                    ; endpoint of the data,
+                                    ; and rcx holds its size
+    push rax
+    push rcx
+    push rbx
+                                    ; We need to adapt to MacOS
+    mov rdi, rcx                    ; rdi will hold the increment
+    add rdi, HEADER_SIZE            ; add space for the headers
+    call _sbrk                      ; now its time to ask MacOS
+                                    ; for more memory
 
-                                ; We need to adapt to MacOS
-    mov rdi, rcx                ; rdi will hold the increment
-    add rdi, HEADER_SIZE        ; add space for the headers
-    call _sbrk                ; now its time to ask MacOS
-                                ; for more memory
+                                    ; under normal conditions, this should
+                                    ; return the new break in %eax, which
+                                    ; will be either 0 if it fails, or
+                                    ; it will be equal to or larger than
+                                    ; we asked for. We don’t care
+                                    ; in this program where it actually
+                                    ; sets the break, so as long as %eax
+                                    ; isn’t 0, we don’t care what it is
 
-                                ; under normal conditions, this should
-                                ; return the new break in %eax, which
-                                ; will be either 0 if it fails, or
-                                ; it will be equal to or larger than
-                                ; we asked for. We don’t care
-                                ; in this program where it actually
-                                ; sets the break, so as long as %eax
-                                ; isn’t 0, we don’t care what it is
+    cmp rax, 0                      ; check for error conditions
+    je error
 
-    mov rdi, rcx
-    call _sbrk
+    pop rbx                         ; restore saved registers
+    pop rcx
+    pop rax
+
+    ; set this memory as unavailable, since we're about to
+    ; give it away
+    mov dword [rax + HDR_AVAIL_OFFSET], UNAVAILABLE
+    ; set the size of the memory
+    mov dword [rax + HDR_SIZE_OFFSET], edx
+
+    ; move rax to the actual start of usable memory.
+    ; rax now holds the return value
+    add rax, HEADER_SIZE
+
+    mov [rel current_break], rbx
+
+    mov rsp, rbp                    ; return the function
+    pop rbp
+    ret
+
+error:
+    mov rax, 0
+    mov rsp, rbp
+    pop rbp
+    ret
+; END OF FUNCTION
 
     global start
     global _main
 _main:
 start:
+    push rbp            ; standard function stuff
+    mov rbp, rsp
+
+    ; Initialize memory manager
     call allocate_init
+
+    ; Print out the heap begin address
+    lea rdi, [rel address_string]
+    mov rsi, [rel heap_begin]
+    call _printf
+
+    ; Allocate
+lea rdi, [rel here]
+call _printf
+
+    push qword 100
+    call allocate
+
+    ; Print out the returned address
+    lea rdi, [rel address_string]
+    mov rsi, rax
+    call _printf
 
     mov rax, SYS_EXIT
     mov rdi, 0
