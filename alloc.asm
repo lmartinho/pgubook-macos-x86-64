@@ -1,6 +1,5 @@
 %include "xnu.asm"
 
-extern _printf
 extern _sbrk
 
 ; PURPOSE: Program to manage memory usage - allocates
@@ -29,20 +28,11 @@ extern _sbrk
 ; GLOBAL VARIABLES
 ; This points to the beginning of the memory we are managing
 heap_begin:
-    dd 0
+    dq 0
 
 ; This points to one location past the memory we are managing
 current_break:
-    dd 0
-    %rep 31; padding to 40 bytes
-    db 0
-    %endrep
-
-address_string: ; debug
-    db `address: %#x\n`, 0
-
-here:
-    db `here\n`, 0
+    dq 0
 
 ; STRUCTURE INFORMATION
     ; Size of space for memory region header
@@ -140,7 +130,7 @@ allocate:
     mov rcx, [rbp + ST_MEM_SIZE]    ; rcx will hold the size
                         ; we are looking for (which is the first
                         ; and only parameter)
-    
+
     mov rax, [rel heap_begin]       ; rax will hold the current 
                                     ; search location
 
@@ -154,16 +144,16 @@ alloc_loop_begin:                   ; here we iterate through each
     je move_break
 
     ; grab the size of this memory
-    mov rdx, [rax + HDR_SIZE_OFFSET]
+    mov edx, [rax + HDR_SIZE_OFFSET]
+
     ; if the space is unavailable, 
     ; go to the next one
     cmp dword [rax + HDR_AVAIL_OFFSET], UNAVAILABLE
-    je next_location
 
+    je next_location
     cmp rdx, rcx                    ; If the space is available, compare
     jle allocate_here               ; the size to the needed size. If its
                                     ; big enough, go to allocate_here
-
 next_location:
     add rax, HEADER_SIZE            ; The total size of the memory 
     add rax, rdx                    ; region is the sum of the size
@@ -175,14 +165,13 @@ next_location:
                                     ; region). So, adding rdx and 8
                                     ; to rax will get the address 
                                     ; of the next memory region
-    
+
     jmp alloc_loop_begin            ; go look for the next location
 
 allocate_here:                      ; if we've made it here,
                                     ; that means that the
                                     ; region header of the region
                                     ; to allocate is in rax
-
     ; mark space as unavailable
     mov dword [rax + HDR_AVAIL_OFFSET], UNAVAILABLE
     add rax, HEADER_SIZE            ; move rax past the header to
@@ -201,7 +190,7 @@ move_break:                         ; if we've made it here, that
                                     ; rbx holds the current
                                     ; endpoint of the data,
                                     ; and rcx holds its size
-    push rax
+
     push rcx
     push rbx
                                     ; We need to adapt to MacOS
@@ -211,7 +200,7 @@ move_break:                         ; if we've made it here, that
                                     ; for more memory
 
                                     ; under normal conditions, this should
-                                    ; return the new break in %eax, which
+                                    ; return the new break in %rax, which
                                     ; will be either 0 if it fails, or
                                     ; it will be equal to or larger than
                                     ; we asked for. We don’t care
@@ -224,7 +213,6 @@ move_break:                         ; if we've made it here, that
 
     pop rbx                         ; restore saved registers
     pop rcx
-    pop rax
 
     ; set this memory as unavailable, since we're about to
     ; give it away
@@ -259,22 +247,11 @@ start:
     ; Initialize memory manager
     call allocate_init
 
-    ; Print out the heap begin address
-    lea rdi, [rel address_string]
-    mov rsi, [rel heap_begin]
-    call _printf
-
     ; Allocate
-lea rdi, [rel here]
-call _printf
-
-    push qword 100
+    push qword 1024
     call allocate
 
-    ; Print out the returned address
-    lea rdi, [rel address_string]
-    mov rsi, rax
-    call _printf
+    mov qword [rel rax + 1024], 1
 
     mov rax, SYS_EXIT
     mov rdi, 0
