@@ -45,7 +45,7 @@ current_break:
 ; CONSTANTS
     UNAVAILABLE equ 0       ; This is the number we will use to mark
                             ; space that has been given out
-    AVAILABLE equ 0         ; This is the number we will use to mark
+    AVAILABLE equ 1         ; This is the number we will use to mark
                             ; space that has been returned, and is 
                             ; available for giving
     SYS_BRK equ 0x2000017   ; (currently unused) System call number for 
@@ -237,6 +237,51 @@ error:
     ret
 ; END OF FUNCTION
 
+;; deallocate ;;
+; PURPOSE:
+;   The purpose of this function is to give back
+;   a region of memory to the pool after we’re done
+;   using it.
+;
+; PARAMETERS:
+;   The only parameter is the address of the memory
+;   we want to return to the memory pool.
+;
+; RETURN VALUE:
+;   There is no return value.
+;
+; PROCESSING:
+;   If you remember, we actually hand the program the
+;   start of the memory that they can use, which is
+;   8 storage locations after the actual start of the
+;   memory region. All we have to do is go back
+;   8 locations and mark that memory as available,
+;   so that the allocate function knows it can use it.
+
+    global deallocate
+    ; Stack position of the memory region to free
+    ST_MEMORY_SEG equ 8
+
+deallocate:
+    ; since the function is so simple, we
+    ; don’t need any of the fancy function stuff
+
+    ; get the address of the memory to free
+    ; (normally this is [rbp + 8], but since
+    ; we didn’t push rbp or move rsp to
+    ; rbp we can just do [rbp + 4])
+    mov rax, [rsp + ST_MEMORY_SEG]
+
+    ; get the pointer to the real beginning of the memory
+    sub rax, HEADER_SIZE
+
+    ; mark it as available
+    mov dword [rax + HDR_AVAIL_OFFSET], AVAILABLE
+
+    ; return
+    ret
+; END OF FUNCTION
+
     global start
     global _main
 _main:
@@ -252,6 +297,9 @@ start:
     call allocate
 
     mov qword [rel rax + 1024], 1
+
+    push rax
+    call deallocate
 
     mov rax, SYS_EXIT
     mov rdi, 0
