@@ -281,27 +281,3 @@ deallocate:
     ; return
     ret
 ; END OF FUNCTION
-
-    global start
-    global _main
-_main:
-start:
-    push rbp            ; standard function stuff
-    mov rbp, rsp
-
-    ; Initialize memory manager
-    call allocate_init
-
-    ; Allocate
-    push qword 1024
-    call allocate
-
-    mov qword [rel rax + 1024], 1
-
-    push rax
-    call deallocate
-
-    mov rax, SYS_EXIT
-    mov rdi, 0
-    syscall
-; END DEBUGGING CODE

@@ -1,10 +1,10 @@
 AS=nasm
-ASFLAGS=-f macho64
+ASFLAGS=-g -f macho64
 
-all: exit exit_32 maximum power factorial toupper concatenate write-records read-records add-year add-year-error-exit hello-world-no-lib hello-world-lib printf-example write-records-lib alloc
+all: exit exit_32 maximum power factorial toupper concatenate write-records read-records add-year add-year-error-exit hello-world-no-lib hello-world-lib printf-example write-records-lib read-records-alloc
 
 clean:
-	rm *.o exit exit_32 maximum power factorial toupper concatenate write-records read-records add-year add-year-error-exit hello-world-no-lib hello-world-lib printf-example alloc
+	rm *.o exit exit_32 maximum power factorial toupper concatenate write-records read-records add-year add-year-error-exit hello-world-no-lib hello-world-lib printf-example read-records-alloc
 
 write-records: write-record.o write-records.o
 	ld write-record.o write-records.o -o write-records
@@ -23,8 +23,8 @@ hello-world-lib: hello-world-lib.o
 	ld -lc -macosx_version_min 10.13.0 hello-world-lib.o -o hello-world-lib
 printf-example: printf-example.o
 	ld -lc -macosx_version_min 10.13.0 printf-example.o -o printf-example
-alloc: alloc.o
-	ld -lc -macosx_version_min 10.13.0 alloc.o -o alloc
+read-records-alloc: xnu.asm record-def.asm alloc.o read-records-alloc.o count-chars.o read-record.o write-newline.o
+	ld -lc -macosx_version_min 10.13.0 alloc.o read-records-alloc.o count-chars.o read-record.o write-newline.o -o read-records-alloc
 
 # Creates shared libraries
 librecord.dylib: writable.o write-record.o read-record.o
