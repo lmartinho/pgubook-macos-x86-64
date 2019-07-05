@@ -18,3 +18,7 @@ References:
 - [XNU System Calls](https://opensource.apple.com/source/xnu/xnu-4570.41.2/bsd/kern/syscalls.master.auto.html)
 
 - [System V x86-64 psABI](https://github.com/hjl-tools/x86-psABI/wiki/X86-psABI)
+
+Useful info:
+
+- To use `gdb` on macOS, code signing is required. I found this [StackOverflow post](https://stackoverflow.com/questions/52699661/macos-mojave-how-to-achieve-codesign-to-enable-debugging-gdb) useful. The instruction I usign as `codesign --entitlements gdb.xml -fs gdb_codesign $(which gdb)`, where gdb.xml is the one in the repo.
