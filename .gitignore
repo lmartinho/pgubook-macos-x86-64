@@ -8,6 +8,7 @@ factorial
 toupper
 concatenate
 write-records
+test.dat
 read-records
 add-year
 add-year-error-exit
@@ -16,3 +17,4 @@ hello-world-lib
 printf-example
 write-records-lib
 alloc
+read-records-alloc
