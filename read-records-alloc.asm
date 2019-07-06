@@ -28,6 +28,10 @@ _main:
     ST_INPUT_DESCRIPTOR equ -8
     ST_OUTPUT_DESCRIPTOR equ -16
 
+    ; main function prologue
+    push rbp
+    mov rbp, rsp
+
     call allocate_init
 
     push RECORD_SIZE
@@ -96,6 +100,10 @@ record_read_loop:
 finished_reading:
     push qword [rel record_buffer_ptr]
     call deallocate 
+
+    ; main function epilogue
+    mov rsp, rbp
+    pop rbp
 
     mov rax, SYS_EXIT
     mov rdi, 0

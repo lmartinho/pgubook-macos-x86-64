@@ -63,13 +63,13 @@ current_break:
 ;          return value.
     global allocate_init
 allocate_init:
-    push rbp                        ; standard function stuff
+    push rbp                        ; function prologue
     mov rbp, rsp
+    sub rsp, 16                     ; performs stack align before system call
 
     ; If the brk system call is called with 0, it
     ; returns the last valid usable address
     ; We're using the C std lib sbrk with 0 increment to determine the last valid usable address
-    sub	rsp, 8                      ; reverse engineered from GCC, although GCC was 16
     xor edi, edi                    ; pass 0 to sbrk to retrieve the current break
     call _sbrk
 
@@ -85,7 +85,7 @@ allocate_init:
                                     ; more memory from Linux the
                                     ; first time it is run
 
-	add	rsp, 8                      ; reverse engineered from GCC
+    add rsp, 16                     ; function epilogue
     mov rsp, rbp
     pop rbp
     ret
