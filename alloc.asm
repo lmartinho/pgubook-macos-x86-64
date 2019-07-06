@@ -65,7 +65,7 @@ current_break:
 allocate_init:
     push rbp                        ; function prologue
     mov rbp, rsp
-    sub rsp, 16                     ; performs stack align before system call
+    sub rsp, 16                     ; performs required stack alignment before system call
 
     ; If the brk system call is called with 0, it
     ; returns the last valid usable address
