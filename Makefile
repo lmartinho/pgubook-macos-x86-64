@@ -6,10 +6,10 @@ LD=ld
 LDFLAGS=-arch x86_64 -macosx_version_min 10.14 -static
 LDFLAGS32=-arch i386 -macosx_version_min 10.14 -static
 
-all: exit exit_32 maximum power factorial toupper concatenate write-records read-records add-year add-year-error-exit hello-world-no-lib hello-world-lib printf-example write-records-lib read-records-alloc sbrk.asm
+all: exit exit_32 maximum power factorial toupper concatenate write-records read-records add-year add-year-error-exit hello-world-no-lib hello-world-lib printf-example write-records-lib read-records-alloc sbrk.asm sbrk_function.asm
 
 clean:
-	rm *.o exit exit_32 maximum power factorial toupper concatenate write-records read-records add-year add-year-error-exit hello-world-no-lib hello-world-lib printf-example read-records-alloc sbrk.asm
+	rm *.o exit exit_32 maximum power factorial toupper concatenate write-records read-records add-year add-year-error-exit hello-world-no-lib hello-world-lib printf-example read-records-alloc sbrk.asm sbrk_function.asm
 
 exit_32.o: exit_32.asm
 	$(AS) $(ASFLAGS32) exit_32.asm -o exit_32.o
@@ -46,6 +46,8 @@ write-records-lib: write-record.o write-records.o librecord.dylib
 # Reverse engineering GCC output
 sbrk.asm: sbrk.c
 	gcc -S -masm=intel -o sbrk.asm sbrk.c
+sbrk_function.asm: sbrk_function.c
+	gcc -S -masm=intel -o sbrk_function.asm sbrk_function.c
 
 %: %.o
 	$(LD) $(LDFLAGS) -o $@ $<
