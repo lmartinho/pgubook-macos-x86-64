@@ -63,20 +63,15 @@ current_break:
 ;          return value.
     global allocate_init
 allocate_init:
-    ; FIXME: Getting a seg fault on the _sbrk call, when I do the standard push rbp
     push rbp                        ; standard function stuff
     mov rbp, rsp
 
     ; If the brk system call is called with 0, it
     ; returns the last valid usable address
     ; We're using the C std lib sbrk with 0 increment to determine the last valid usable address
+    sub	rsp, 8                      ; reverse engineered from GCC, although GCC was 16
     mov rdi, 0
-    ; FIXME: Seg fault happens here
     call _sbrk
-; Debug look for the 2 rval
-mov rax, 0x2000001  ; 1 is the exit syscall (AUE_EXIT), 2 is for BSD calls (SYSCALL_CLASS_UNIX)
-mov rdi, 2          ; 2 is the rval for exit
-syscall             ; perform the call (instead of int 0x80)
 
     inc rax                         ; rax now has the last valid
                                     ; address, and we want the
@@ -90,6 +85,7 @@ syscall             ; perform the call (instead of int 0x80)
                                     ; more memory from Linux the
                                     ; first time it is run
 
+	add	rsp, 8                      ; reverse engineered from GCC
     mov rsp, rbp
     pop rbp
     ret
