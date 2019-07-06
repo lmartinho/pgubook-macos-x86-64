@@ -70,7 +70,7 @@ allocate_init:
     ; returns the last valid usable address
     ; We're using the C std lib sbrk with 0 increment to determine the last valid usable address
     sub	rsp, 8                      ; reverse engineered from GCC, although GCC was 16
-    mov rdi, 0
+    xor edi, edi                    ; pass 0 to sbrk to retrieve the current break
     call _sbrk
 
     inc rax                         ; rax now has the last valid
