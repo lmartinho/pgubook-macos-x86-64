@@ -267,9 +267,9 @@ deallocate:
     ; don’t need any of the fancy function stuff
 
     ; get the address of the memory to free
-    ; (normally this is [rbp + 8], but since
+    ; (normally this is [rbp + 16], but since
     ; we didn’t push rbp or move rsp to
-    ; rbp we can just do [rbp + 4])
+    ; rbp we can just do [rsp + 8])
     mov rax, [rsp + ST_MEMORY_SEG]
 
     ; get the pointer to the real beginning of the memory

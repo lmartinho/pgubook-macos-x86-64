@@ -94,7 +94,7 @@ record_read_loop:
     jmp record_read_loop
 
 finished_reading:
-    push RECORD_SIZE
+    push qword [rel record_buffer_ptr]
     call deallocate 
 
     mov rax, SYS_EXIT
